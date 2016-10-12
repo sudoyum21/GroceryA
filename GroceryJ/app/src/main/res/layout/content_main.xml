@@ -13,4 +13,61 @@
     tools:context="lam.myapplication.MainActivity"
     tools:showIn="@layout/activity_main">
 
+
+    <Button
+        android:text="Fish Stocks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/meats_btn"
+        android:layout_alignParentStart="true"
+        android:background="#00AAFF"
+        android:onClick="categoy_btnOnClick"
+        android:id="@+id/fish_stocks_btn" />
+
+    <Button
+        android:text="Fruits"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignLeft="@id/fish_stocks_btn"
+        android:layout_alignRight="@id/fish_stocks_btn"
+        android:background="#FFFF00"
+        android:onClick="categoy_btnOnClick"
+        android:id="@+id/fruits_btn" />
+
+
+    <Button
+        android:text="Meats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/vegetables_btn"
+        android:layout_alignParentStart="true"
+        android:layout_alignLeft="@id/fish_stocks_btn"
+        android:layout_alignRight="@id/fish_stocks_btn"
+        android:background="#FF0000"
+        android:onClick="categoy_btnOnClick"
+        android:id="@+id/meats_btn" />
+
+    <Button
+        android:text="Diaries"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fish_stocks_btn"
+        android:layout_alignLeft="@id/fish_stocks_btn"
+        android:layout_alignRight="@id/fish_stocks_btn"
+        android:layout_alignParentStart="true"
+        android:background="#AAAAFF"
+        android:onClick="categoy_btnOnClick"
+        android:id="@+id/diaries_btn" />
+
+    <Button
+        android:text="Vegetables"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/vegetables_btn"
+        android:background="#00FF00"
+        android:layout_below="@+id/fruits_btn"
+        android:onClick="categoy_btnOnClick"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>
