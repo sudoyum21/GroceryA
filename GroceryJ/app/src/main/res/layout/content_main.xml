@@ -21,7 +21,7 @@
         android:layout_below="@+id/meats_btn"
         android:layout_alignParentStart="true"
         android:background="#00AAFF"
-        android:onClick="categoy_btnOnClick"
+        android:onClick="category_btnOnClick"
         android:id="@+id/fish_stocks_btn" />
 
     <Button
@@ -33,7 +33,7 @@
         android:layout_alignLeft="@id/fish_stocks_btn"
         android:layout_alignRight="@id/fish_stocks_btn"
         android:background="#FFFF00"
-        android:onClick="categoy_btnOnClick"
+        android:onClick="category_btnOnClick"
         android:id="@+id/fruits_btn" />
 
 
@@ -46,7 +46,7 @@
         android:layout_alignLeft="@id/fish_stocks_btn"
         android:layout_alignRight="@id/fish_stocks_btn"
         android:background="#FF0000"
-        android:onClick="categoy_btnOnClick"
+        android:onClick="category_btnOnClick"
         android:id="@+id/meats_btn" />
 
     <Button
@@ -58,7 +58,7 @@
         android:layout_alignRight="@id/fish_stocks_btn"
         android:layout_alignParentStart="true"
         android:background="#AAAAFF"
-        android:onClick="categoy_btnOnClick"
+        android:onClick="category_btnOnClick"
         android:id="@+id/diaries_btn" />
 
     <Button
@@ -68,6 +68,6 @@
         android:id="@+id/vegetables_btn"
         android:background="#00FF00"
         android:layout_below="@+id/fruits_btn"
-        android:onClick="categoy_btnOnClick"
+        android:onClick="category_btnOnClick"
         android:layout_alignParentStart="true" />
 </RelativeLayout>
