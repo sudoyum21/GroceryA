@@ -16,27 +16,22 @@ public class FoodActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.food_content);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_food);
+        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_food);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
     }
 
 
 
     public void addItem_btnOnClick(View v)
     {
-        String text = ((Button) v).getText().toString();
-        Toast.makeText(this, text , Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(FoodActivity.this, FoodActivity.class);
-        startActivity(intent);
+        FoodActivity.this.setContentView(R.layout.food_new_item);
     }
 }
