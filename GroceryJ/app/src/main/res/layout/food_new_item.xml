@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="lam.myapplication.FoodActivity">
+    tools:context="lam.myapplication.Food_new_item_activity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -20,8 +20,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text|textPersonName"
-            android:layout_below="@id/food_name"
-            android:text="item name here"
+            android:layout_below="@+id/food_name"
+            android:text=""
+            android:hint="Enter new item name here"
             android:ems="10"
             android:id="@+id/food_name_input" />
 
@@ -29,7 +30,7 @@
             android:text="Enter new item price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/food_name_input"
+            android:layout_below="@+id/food_name_input"
             android:id="@+id/food_price"
             android:textAppearance="@style/TextAppearance.AppCompat" />
 
@@ -37,8 +38,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text|textPersonName|number|numberDecimal"
-            android:text="item price here"
-            android:layout_below="@id/food_price"
+            android:text=""
+            android:hint="Enter new item price here"
+            android:layout_below="@+id/food_price"
             android:ems="10"
             android:id="@+id/food_price_input" />
 
@@ -46,14 +48,16 @@
             android:text="Confirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/food_price_input"
+            android:layout_below="@+id/food_price_input"
+            android:onClick="confirm_btn_click"
             android:id="@+id/food_adding_confirm_btn" />
 
         <Button
             android:text="Cancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/food_adding_confirm_btn"
+            android:layout_below="@+id/food_adding_confirm_btn"
+            android:onClick="cancel_btn_click"
             android:id="@+id/food_adding_cancel_btn" />
     </RelativeLayout>
 </FrameLayout>
