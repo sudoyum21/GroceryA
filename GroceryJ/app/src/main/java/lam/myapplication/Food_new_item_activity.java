@@ -1,5 +1,8 @@
 package lam.myapplication;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -12,12 +15,14 @@ import android.widget.TextView;
  * Created by Lam on 10/14/2016.
  */
 
-public class Food_new_item_activity  extends AppCompatActivity {
 
-    protected void onCreate(Bundle savedInstanceState) {
+public class Food_new_item_activity  extends AppCompatActivity
+{
+
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.food_new_item);
-
 
         EditText editTextName = (EditText) findViewById(R.id.food_name_input);
         editTextName.addTextChangedListener(new GenericTextWatcher(editTextName));
@@ -26,10 +31,8 @@ public class Food_new_item_activity  extends AppCompatActivity {
         editTextPrice.addTextChangedListener(new GenericTextWatcher(editTextPrice));
 
         TextView textViewName = (TextView) findViewById(R.id.food_name);
-        //textViewName.addTextChangedListener(new GenericTextWatcher(editTextName));
 
         TextView textViewPrice = (TextView) findViewById(R.id.food_price);
-        //textViewPrice.addTextChangedListener(new GenericTextWatcher(editTextPrice));
     }
 
 
@@ -41,7 +44,8 @@ public class Food_new_item_activity  extends AppCompatActivity {
         }
 
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
+        {
             switch(view.getId()){
                 case R.id.food_name_input:
                     TextView textViewName = (TextView) findViewById(R.id.food_name);
@@ -54,14 +58,23 @@ public class Food_new_item_activity  extends AppCompatActivity {
             }
         }
 
-        public void afterTextChanged(Editable editable) {
+        public void afterTextChanged(Editable editable)
+        {
         }
     }
 
 
     public void confirm_btn_click(View v)
     {
+        TextView textViewName = (TextView) findViewById(R.id.food_name);
+        String foodName = textViewName.getText().toString();
+        TextView textViewPrice = (TextView) findViewById(R.id.food_price);
+        String foodPrice = textViewPrice.getText().toString();
 
+        Intent intent = new Intent(Food_new_item_activity.this, FoodActivity.class);
+        intent.putExtra("foodName", foodName);
+        intent.putExtra("foodPrice", foodPrice);
+        startActivity(intent);
     }
 
     public void cancel_btn_click(View v)
