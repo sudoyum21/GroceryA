@@ -69,12 +69,14 @@ import java.util.ArrayList;
 
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
+import javax.xml.transform.stream.StreamResult;
+
 import java.io.*;
 
 public class FoodActivity extends AppCompatActivity
 {
     static final int REQ_CODE = 1;
-    static String filename_ = "foodActivity1.xml";
+    static String filename_ = "foodActivity1.txt";
 
     private List<TextView> textViewList_ = new ArrayList<TextView>();
 
@@ -158,16 +160,15 @@ public class FoodActivity extends AppCompatActivity
             textViewList_.add((TextView)layout.findViewById(id1));
             textViewList_.add((TextView)layout.findViewById(id2));
 
-            String xmlText = writeXml(name, price);
-
-            writeToFile(xmlText);
+            writeToFile(this, name, price);
             //readSimpleFile(filename_);
+            readInternalData();
 
             readXML();
         }
     }
 
-    private void readSimpleFile(String filename)
+    private String readSimpleFile(String filename)
     {
         try {
             FileInputStream fileIn=openFileInput(filename);
@@ -184,17 +185,31 @@ public class FoodActivity extends AppCompatActivity
             }
             InputRead.close();
             Toast.makeText(getBaseContext(), s,Toast.LENGTH_SHORT).show();
+            return s;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
-    private void writeToFile(String text)
+    private void writeToFile(Context context, String name, String price)
     {
         try {
+            //File f = new File(filename_);
+            String text = null;
+            String filePath = context.getFilesDir().getPath().toString() + filename_;
+            File f = new File(filePath);
+            if(!f.exists()) {
+                f.createNewFile();
+                text = writeXmlFirstTime(name, price);
+            }
+            else
+            {
+                text = newXmlElement();
+            }
             // Create a new output file stream
-            FileOutputStream fileos = openFileOutput(filename_, Context.MODE_PRIVATE);
+            FileOutputStream fileos = openFileOutput(filename_, Context.MODE_APPEND);
             fileos.write(text.getBytes());
             fileos.close();
 
@@ -205,6 +220,11 @@ public class FoodActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private String newXmlElement() {
+        String text = null;
+        return text;
     }
 
     private TextView getLastTextViewList()
@@ -222,7 +242,7 @@ public class FoodActivity extends AppCompatActivity
     }
 
 
-    private String writeXml(String name, String price){
+    private String writeXmlFirstTime(String name, String price){
 
         XmlSerializer serializer = Xml.newSerializer();
         StringWriter writer = new StringWriter();
@@ -234,6 +254,7 @@ public class FoodActivity extends AppCompatActivity
             //for (Message msg: messages){
                 serializer.startTag("", "foodName");
                 //serializer.attribute("", "date", msg.getDate());
+                serializer.text(name);
                 serializer.startTag("", "price");
                 serializer.text(price);
                 serializer.endTag("", "price");
@@ -255,11 +276,9 @@ public class FoodActivity extends AppCompatActivity
 
     private void readXML()
     {
-        //xmlParser xml = new xmlParser(filename_);
         parseXml();
     }
 
-/*
     private StringBuffer readInternalData()
     {
         File file = new File(getFilesDir(), filename_);
@@ -282,53 +301,54 @@ public class FoodActivity extends AppCompatActivity
         }
 
         return datax;
-    }*/
-public void parseXml(){
+    }
 
-    try {
-        File inputFile = new File(filename_);
+    private void parseXml(){
 
-        DocumentBuilderFactory dbFactory
-                = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(inputFile);
-        doc.getDocumentElement().normalize();
-        System.out.println("Root element :"
-                + doc.getDocumentElement().getNodeName());
-        NodeList nList = doc.getElementsByTagName("foodNames");
-        System.out.println("----------------------------");
-        for (int temp = 0; temp < nList.getLength(); temp++) {
-            Node nNode = nList.item(temp);
-            System.out.println("\nCurrent Element :"
-                    + nNode.getNodeName());
-            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                Element eElement = (Element) nNode;
-                System.out.println("Student roll no : "
-                        + eElement.getAttribute("number"));
-                System.out.println("foodName : "
-                        + eElement
-                        .getElementsByTagName("foodName")
-                        .item(0)
-                        .getTextContent());
-                System.out.println("price : "
-                        + eElement
-                        .getElementsByTagName("price")
-                        .item(0)
-                        .getTextContent());
-                    /*System.out.println("Nick Name : "
+        try {
+            Log.d("beforeParse", readSimpleFile(filename_));
+            FileInputStream inputFile = openFileInput(filename_);
+            DocumentBuilderFactory dbFactory
+                    = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(inputFile);
+            doc.getDocumentElement().normalize();
+            System.out.println("Root element :"
+                    + doc.getDocumentElement().getNodeName());
+            NodeList nList = doc.getElementsByTagName("foodNames");
+            System.out.println("----------------------------");
+            for (int temp = 0; temp < nList.getLength(); temp++) {
+                Node nNode = nList.item(temp);
+                System.out.println("\nCurrent Element :"
+                        + nNode.getNodeName());
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) nNode;
+                    System.out.println("Student roll no : "
+                            + eElement.getAttribute("number"));
+                    System.out.println("foodName : "
                             + eElement
-                            .getElementsByTagName("nickname")
+                            .getElementsByTagName("foodName")
                             .item(0)
                             .getTextContent());
-                    System.out.println("Marks : "
+                    System.out.println("price : "
                             + eElement
-                            .getElementsByTagName("marks")
+                            .getElementsByTagName("price")
                             .item(0)
-                            .getTextContent());*/
+                            .getTextContent());
+                        /*System.out.println("Nick Name : "
+                                + eElement
+                                .getElementsByTagName("nickname")
+                                .item(0)
+                                .getTextContent());
+                        System.out.println("Marks : "
+                                + eElement
+                                .getElementsByTagName("marks")
+                                .item(0)
+                                .getTextContent());*/
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
     }
-}
 }
