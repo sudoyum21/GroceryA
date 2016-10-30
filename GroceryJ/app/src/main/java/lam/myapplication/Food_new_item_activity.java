@@ -19,6 +19,8 @@ import android.widget.TextView;
 public class Food_new_item_activity  extends AppCompatActivity
 {
 
+    static final int REQ_CODE = 1;
+
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -74,7 +76,10 @@ public class Food_new_item_activity  extends AppCompatActivity
         Intent intent = new Intent(Food_new_item_activity.this, FoodActivity.class);
         intent.putExtra("foodName", foodName);
         intent.putExtra("foodPrice", foodPrice);
-        startActivity(intent);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        setResult(RESULT_OK, intent);
+        startActivityForResult(intent, REQ_CODE);
+        finish();
     }
 
     public void cancel_btn_click(View v)
