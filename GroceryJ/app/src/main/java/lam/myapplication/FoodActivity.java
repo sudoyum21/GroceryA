@@ -1,7 +1,9 @@
 package lam.myapplication;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.util.Log;
+import android.util.Xml;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,12 +28,49 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.text.TextWatcher;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xmlpull.v1.XmlSerializer;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import static android.R.attr.data;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.TextView;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 public class FoodActivity extends AppCompatActivity
 {
     static final int REQ_CODE = 1;
+    static String filename_ = "foodActivity1.xml";
 
     private List<TextView> textViewList_ = new ArrayList<TextView>();
 
@@ -41,25 +82,6 @@ public class FoodActivity extends AppCompatActivity
 
         setContentView(R.layout.food_content);
         getAllTextViews();
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent)
-    {
-        super.onActivityResult(requestCode, resultCode, intent);
-        if (requestCode == REQ_CODE)
-        {
-            if (resultCode == RESULT_OK)
-            {
-                String foodName = intent.getStringExtra("foodName");
-                String foodPrice = intent.getStringExtra("foodPrice");
-                super.onActivityResult(requestCode, resultCode, intent);
-                addNewElementTextViews(foodName, foodPrice);
-            }
-            if (resultCode == RESULT_CANCELED)
-            {
-                // Write your code if there's no result
-            }
-        }
     }
 
     protected void onNewIntent(Intent intent)
@@ -147,4 +169,60 @@ public class FoodActivity extends AppCompatActivity
             return textViewList_.get(size);
         }
     }
+
+
+    private String writeXml(List<Message> messages){
+        XmlSerializer serializer = Xml.newSerializer();
+        StringWriter writer = new StringWriter();
+        try {
+            serializer.setOutput(writer);
+            serializer.startDocument("UTF-8", true);
+            serializer.startTag("", "foodNames");
+            serializer.attribute("", "number", String.valueOf(messages.size()));
+            for (Message msg: messages){
+                serializer.startTag("", "foodName");
+                serializer.attribute("", "date", msg.getDate());
+                serializer.startTag("", "price");
+                serializer.text("SOMETHING");
+                serializer.endTag("", "price");
+                /*serializer.startTag("", "url");
+                //serializer.text(msg.getLink().toExternalForm());
+                serializer.endTag("", "url");
+                serializer.startTag("", "body");
+                //serializer.text(msg.getDescription());
+                serializer.endTag("", "body");*/
+                serializer.endTag("", "foodName");
+            }
+            serializer.endTag("", "foodNames");
+            serializer.endDocument();
+            return writer.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+/*
+    private StringBuffer readInternalData()
+    {
+        File file = new File(getFilesDir(), filename_);
+        String filename = filename_;
+        StringBuffer datax = new StringBuffer("");
+        try {
+            FileInputStream fIn = openFileInput (filename);
+            InputStreamReader isr = new InputStreamReader (fIn);
+            BufferedReader buffreader = new BufferedReader (isr);
+
+            String readString = buffreader.readLine ( ) ;
+            while ( readString != null ) {
+                datax.append(readString);
+                readString = buffreader.readLine ( ) ;
+            }
+
+            isr.close ( ) ;
+        } catch ( IOException ioe ) {
+            ioe.printStackTrace();
+        }
+
+        return datax;
+    }*/
 }
