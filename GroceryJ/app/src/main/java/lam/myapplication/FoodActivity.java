@@ -158,8 +158,52 @@ public class FoodActivity extends AppCompatActivity
             textViewList_.add((TextView)layout.findViewById(id1));
             textViewList_.add((TextView)layout.findViewById(id2));
 
-            writeXml(name, price);
+            String xmlText = writeXml(name, price);
+
+            writeToFile(xmlText);
+            //readSimpleFile(filename_);
+
             readXML();
+        }
+    }
+
+    private void readSimpleFile(String filename)
+    {
+        try {
+            FileInputStream fileIn=openFileInput(filename);
+            InputStreamReader InputRead= new InputStreamReader(fileIn);
+
+            char[] inputBuffer= new char[100];
+            String s="";
+            int charRead;
+
+            while ((charRead=InputRead.read(inputBuffer))>0) {
+                // char to string conversion
+                String readstring=String.copyValueOf(inputBuffer,0,charRead);
+                s +=readstring;
+            }
+            InputRead.close();
+            Toast.makeText(getBaseContext(), s,Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void writeToFile(String text)
+    {
+        try {
+            // Create a new output file stream
+            FileOutputStream fileos = openFileOutput(filename_, Context.MODE_PRIVATE);
+            fileos.write(text.getBytes());
+            fileos.close();
+
+            //display file saved message
+            Toast.makeText(getBaseContext(), "File saved successfully!",
+                    Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -179,6 +223,7 @@ public class FoodActivity extends AppCompatActivity
 
 
     private String writeXml(String name, String price){
+
         XmlSerializer serializer = Xml.newSerializer();
         StringWriter writer = new StringWriter();
         try {
@@ -210,8 +255,8 @@ public class FoodActivity extends AppCompatActivity
 
     private void readXML()
     {
-        xmlParser xml = new xmlParser(filename_);
-        xml.parseXml();
+        //xmlParser xml = new xmlParser(filename_);
+        parseXml();
     }
 
 /*
@@ -238,4 +283,52 @@ public class FoodActivity extends AppCompatActivity
 
         return datax;
     }*/
+public void parseXml(){
+
+    try {
+        File inputFile = new File(filename_);
+
+        DocumentBuilderFactory dbFactory
+                = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(inputFile);
+        doc.getDocumentElement().normalize();
+        System.out.println("Root element :"
+                + doc.getDocumentElement().getNodeName());
+        NodeList nList = doc.getElementsByTagName("foodNames");
+        System.out.println("----------------------------");
+        for (int temp = 0; temp < nList.getLength(); temp++) {
+            Node nNode = nList.item(temp);
+            System.out.println("\nCurrent Element :"
+                    + nNode.getNodeName());
+            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) nNode;
+                System.out.println("Student roll no : "
+                        + eElement.getAttribute("number"));
+                System.out.println("foodName : "
+                        + eElement
+                        .getElementsByTagName("foodName")
+                        .item(0)
+                        .getTextContent());
+                System.out.println("price : "
+                        + eElement
+                        .getElementsByTagName("price")
+                        .item(0)
+                        .getTextContent());
+                    /*System.out.println("Nick Name : "
+                            + eElement
+                            .getElementsByTagName("nickname")
+                            .item(0)
+                            .getTextContent());
+                    System.out.println("Marks : "
+                            + eElement
+                            .getElementsByTagName("marks")
+                            .item(0)
+                            .getTextContent());*/
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 }

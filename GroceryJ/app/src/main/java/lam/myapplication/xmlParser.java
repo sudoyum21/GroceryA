@@ -4,7 +4,11 @@ package lam.myapplication;
  * Created by Lam on 10/30/2016.
  */
 
+import android.content.res.AssetManager;
+
 import java.io.File;
+import java.io.InputStream;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
@@ -22,6 +26,8 @@ public class xmlParser {
 
         try {
             File inputFile = new File(fileName_);
+            //AssetManager assetManager = getAssets();
+            //InputStream inputFile = assetManager.open(fileName_);
             DocumentBuilderFactory dbFactory
                     = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
