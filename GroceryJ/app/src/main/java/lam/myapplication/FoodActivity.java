@@ -67,6 +67,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import org.w3c.dom.*;
+import javax.xml.parsers.*;
+import java.io.*;
+
 public class FoodActivity extends AppCompatActivity
 {
     static final int REQ_CODE = 1;
@@ -153,6 +157,9 @@ public class FoodActivity extends AppCompatActivity
 
             textViewList_.add((TextView)layout.findViewById(id1));
             textViewList_.add((TextView)layout.findViewById(id2));
+
+            writeXml(name, price);
+            readXML();
         }
     }
 
@@ -171,19 +178,19 @@ public class FoodActivity extends AppCompatActivity
     }
 
 
-    private String writeXml(List<Message> messages){
+    private String writeXml(String name, String price){
         XmlSerializer serializer = Xml.newSerializer();
         StringWriter writer = new StringWriter();
         try {
             serializer.setOutput(writer);
             serializer.startDocument("UTF-8", true);
             serializer.startTag("", "foodNames");
-            serializer.attribute("", "number", String.valueOf(messages.size()));
-            for (Message msg: messages){
+            //serializer.attribute("", "number", String.valueOf(messages.size()));
+            //for (Message msg: messages){
                 serializer.startTag("", "foodName");
-                serializer.attribute("", "date", msg.getDate());
+                //serializer.attribute("", "date", msg.getDate());
                 serializer.startTag("", "price");
-                serializer.text("SOMETHING");
+                serializer.text(price);
                 serializer.endTag("", "price");
                 /*serializer.startTag("", "url");
                 //serializer.text(msg.getLink().toExternalForm());
@@ -192,13 +199,19 @@ public class FoodActivity extends AppCompatActivity
                 //serializer.text(msg.getDescription());
                 serializer.endTag("", "body");*/
                 serializer.endTag("", "foodName");
-            }
+            //}
             serializer.endTag("", "foodNames");
             serializer.endDocument();
             return writer.toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void readXML()
+    {
+        xmlParser xml = new xmlParser(filename_);
+        xml.parseXml();
     }
 
 /*
