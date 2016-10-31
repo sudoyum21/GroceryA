@@ -31,6 +31,8 @@ import android.text.TextWatcher;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xmlpull.v1.XmlSerializer;
@@ -69,6 +71,10 @@ import java.util.ArrayList;
 
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import java.io.*;
@@ -76,7 +82,7 @@ import java.io.*;
 public class FoodActivity extends AppCompatActivity
 {
     static final int REQ_CODE = 1;
-    static String filename_ = "foodActivity1.txt";
+    static String filename_ = "foodActivity9.txt";
 
     private List<TextView> textViewList_ = new ArrayList<TextView>();
 
@@ -105,6 +111,11 @@ public class FoodActivity extends AppCompatActivity
         this.startActivity(intent);
     }
 
+    public void clearData_btnonClick(View v)
+    {
+        deleteXML(this);
+    }
+
     private void getAllTextViews()
     {
         ViewGroup layout = (ViewGroup) findViewById(R.id.food_content_textField);
@@ -115,6 +126,19 @@ public class FoodActivity extends AppCompatActivity
             {
                 textViewList_.add((TextView)childView);
             }
+        }
+    }
+    private TextView getLastTextViewList()
+    {
+        // Get the odd textview (containing the food name)
+        int size = textViewList_.size() - 2;
+        if(size < 0)
+        {
+            return null;
+        }
+        else
+        {
+            return textViewList_.get(size);
         }
     }
 
@@ -193,90 +217,109 @@ public class FoodActivity extends AppCompatActivity
         return null;
     }
 
+    private void deleteXML(Context context) {
+        String filePath = context.getFilesDir().getPath().toString() + filename_;
+        File f = new File(filePath);
+        if(f.exists()) {
+            f.delete();
+            Toast.makeText(getBaseContext(), "Deleted!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void writeToFile(Context context, String name, String price)
     {
         try {
-            //File f = new File(filename_);
-            String text = null;
-            String filePath = context.getFilesDir().getPath().toString() + filename_;
-            File f = new File(filePath);
-            if(!f.exists()) {
-                f.createNewFile();
-                text = writeXmlFirstTime(name, price);
+                //File f = new File(filename_);
+                String text = null;
+                String filePath = context.getFilesDir().getPath().toString() + filename_;
+                File f = new File(filePath);
+                if(!f.exists()) {
+                    f.createNewFile();
+                    text = writeXmlFirstTime(name, price);
+                }
+                else
+                {
+                    text = writeXmlElement(name, price);
+                }
+                // Create a new output file stream
+                FileOutputStream fileos = openFileOutput(filename_, Context.MODE_PRIVATE);
+                if(!(text == null)) {
+                    try {
+                        fileos.write(text.getBytes());
+                    }
+                    catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+                else {
+                    Log.w("[WARNING]:","writing new xml element returns null");
+                }
+                fileos.close();
             }
-            else
-            {
-                text = newXmlElement();
-            }
-            // Create a new output file stream
-            FileOutputStream fileos = openFileOutput(filename_, Context.MODE_APPEND);
-            fileos.write(text.getBytes());
-            fileos.close();
-
-            //display file saved message
-            Toast.makeText(getBaseContext(), "File saved successfully!",
-                    Toast.LENGTH_SHORT).show();
-
-        } catch (Exception e) {
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private String newXmlElement() {
+    private String writeXmlElement(String name, String price) {
         String text = null;
+
+        FileInputStream inputFile = null;
+        try {
+            inputFile = openFileInput(filename_);
+            DocumentBuilderFactory dbFactory
+                    = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(inputFile);
+            doc.getDocumentElement().normalize();
+
+            NodeList nList = doc.getElementsByTagName("foodNames");
+            int sizeOfNlist = nList.getLength()-1;
+            Element foodNamesEle = (Element)doc.getElementsByTagName("foodNames").item(sizeOfNlist);
+
+            Element ele = doc.createElement("foodName");
+            ele.setTextContent(name);
+            ele.setAttribute("price", price);
+
+            foodNamesEle.appendChild(ele);
+            text = convertDocumentToString(doc);
+            System.out.println(text);
+            inputFile.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return text;
     }
-
-    private TextView getLastTextViewList()
-    {
-        // Get the odd textview (containing the food name)
-        int size = textViewList_.size() - 2;
-        if(size < 0)
-        {
-            return null;
-        }
-        else
-        {
-            return textViewList_.get(size);
-        }
-    }
-
 
     private String writeXmlFirstTime(String name, String price){
 
         XmlSerializer serializer = Xml.newSerializer();
         StringWriter writer = new StringWriter();
+        String text = null;
         try {
             serializer.setOutput(writer);
             serializer.startDocument("UTF-8", true);
             serializer.startTag("", "foodNames");
-            //serializer.attribute("", "number", String.valueOf(messages.size()));
-            //for (Message msg: messages){
-                serializer.startTag("", "foodName");
-                //serializer.attribute("", "date", msg.getDate());
-                serializer.text(name);
-                serializer.startTag("", "price");
-                serializer.text(price);
-                serializer.endTag("", "price");
-                /*serializer.startTag("", "url");
-                //serializer.text(msg.getLink().toExternalForm());
-                serializer.endTag("", "url");
-                serializer.startTag("", "body");
-                //serializer.text(msg.getDescription());
-                serializer.endTag("", "body");*/
-                serializer.endTag("", "foodName");
-            //}
+            serializer.startTag("", "foodName");
+            serializer.attribute("","price",price);
+            serializer.text(name);
+            serializer.endTag("", "foodName");
             serializer.endTag("", "foodNames");
             serializer.endDocument();
-            return writer.toString();
+            text = writer.toString();
+            serializer.flush();
+            writer.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void readXML()
-    {
-        parseXml();
+        return text;
     }
 
     private StringBuffer readInternalData()
@@ -303,10 +346,10 @@ public class FoodActivity extends AppCompatActivity
         return datax;
     }
 
-    private void parseXml(){
+    private void readXML(){
 
         try {
-            Log.d("beforeParse", readSimpleFile(filename_));
+            Log.d("debug xml", readInternalData().toString());
             FileInputStream inputFile = openFileInput(filename_);
             DocumentBuilderFactory dbFactory
                     = DocumentBuilderFactory.newInstance();
@@ -323,32 +366,35 @@ public class FoodActivity extends AppCompatActivity
                         + nNode.getNodeName());
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;
-                    System.out.println("Student roll no : "
-                            + eElement.getAttribute("number"));
-                    System.out.println("foodName : "
-                            + eElement
-                            .getElementsByTagName("foodName")
-                            .item(0)
-                            .getTextContent());
-                    System.out.println("price : "
-                            + eElement
-                            .getElementsByTagName("price")
-                            .item(0)
-                            .getTextContent());
-                        /*System.out.println("Nick Name : "
-                                + eElement
-                                .getElementsByTagName("nickname")
-                                .item(0)
-                                .getTextContent());
-                        System.out.println("Marks : "
-                                + eElement
-                                .getElementsByTagName("marks")
-                                .item(0)
-                                .getTextContent());*/
+                    int sizeOfElementParent = eElement.getElementsByTagName("foodName").getLength();
+                    for(int i = 0; i < sizeOfElementParent; ++i) {
+                        System.out.println("Foodname name is : "
+                                + eElement.getTextContent());
+                        System.out.println("price is : "
+                                + eElement.getAttribute("price"));
+                    }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static String convertDocumentToString(Document doc) {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer;
+        try {
+            transformer = tf.newTransformer();
+            // below code to remove XML declaration
+            // transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            StringWriter writer = new StringWriter();
+            transformer.transform(new DOMSource(doc), new StreamResult(writer));
+            String output = writer.getBuffer().toString();
+            return output;
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

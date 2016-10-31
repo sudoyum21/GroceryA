@@ -26,13 +26,24 @@
         android:layout_alignParentStart="true"
         android:onClick="addItem_btnOnClick" />
 
+    <Button
+        android:text="Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="41dp"
+        android:id="@+id/button"
+        android:layout_alignParentBottom="true"
+        android:onClick="clearData_btnonClick" />
+        android:layout_alignEnd="@+id/fab_food" />
+
     <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:id="@+id/food_content_textField">
+        android:id="@+id/food_content_textField"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true">
+
 
     </RelativeLayout>
-
 </RelativeLayout>
