@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         String text = ((Button) v).getText().toString();
         Toast.makeText(this, text , Toast.LENGTH_LONG).show();
         Intent intent = new Intent(MainActivity.this, FoodActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         this.startActivity(intent);
     }
 }

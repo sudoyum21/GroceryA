@@ -76,10 +76,11 @@ public class Food_new_item_activity  extends AppCompatActivity
         Intent intent = new Intent(Food_new_item_activity.this, FoodActivity.class);
         intent.putExtra("foodName", foodName);
         intent.putExtra("foodPrice", foodPrice);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         setResult(RESULT_OK, intent);
         startActivityForResult(intent, REQ_CODE);
-        finish();
+        this.finish();
     }
 
     public void cancel_btn_click(View v)
