@@ -84,7 +84,7 @@ import java.io.*;
 public class FoodActivity extends AppCompatActivity
 {
     static final int REQ_CODE = 1;
-    static String filename_ = "foodActivity9.txt";
+    static private String filename_ = "foodActivity1";
 
     private List<TextView> textViewList_ = new ArrayList<TextView>();
 
@@ -95,16 +95,29 @@ public class FoodActivity extends AppCompatActivity
         Intent intent = getIntent();
 
         setContentView(R.layout.food_content);
+
+        String categoryText = intent.getStringExtra("category");
+
+        filename_ += categoryText + ".txt";
+
+        readXML();
+
         getAllTextViews();
     }
 
     protected void onNewIntent(Intent intent)
     {
         super.onNewIntent(intent);
-
+        deleteAllTextView();
         String foodName = intent.getStringExtra("foodName");
         String foodPrice = intent.getStringExtra("foodPrice");
-        addNewElementTextViews(foodName, foodPrice);
+        String categoryText = intent.getStringExtra("category");
+        if(!filename_.contains(categoryText)) {
+            filename_ += categoryText + ".txt";
+        }
+        readXML();
+        getAllTextViews();
+        addNewElementTextViews(foodName, foodPrice, true);
     }
 
     public void addItem_btnOnClick(View v)
@@ -165,7 +178,13 @@ public class FoodActivity extends AppCompatActivity
         }
     }
 
-    private void addNewElementTextViews(String name, String price)
+    private void deleteAllTextView()
+    {
+        RelativeLayout layout = (RelativeLayout)findViewById(R.id.food_content_textField);
+        layout.removeAllViews();
+    }
+
+    private void addNewElementTextViews(String name, String price, boolean writingToFile)
     {
         if(name != null)
         {
@@ -207,11 +226,14 @@ public class FoodActivity extends AppCompatActivity
             textViewList_.add((TextView)layout.findViewById(id1));
             textViewList_.add((TextView)layout.findViewById(id2));
 
-            writeToFile(this, name, price);
-            //readSimpleFile(filename_);
-            readInternalData();
+            if(writingToFile) {
+                writeToFile(this, name, price);
+                readSimpleFile(filename_);
+            }
+            //
+            //readInternalData();
 
-            readXML();
+            //readXML();
         }
     }
 
@@ -391,10 +413,11 @@ public class FoodActivity extends AppCompatActivity
                     Element eElement = (Element) nNode;
                     int sizeOfElementParent = eElement.getElementsByTagName("foodName").getLength();
                     for(int i = 0; i < sizeOfElementParent; ++i) {
-                        System.out.println("Foodname name is : "
-                                + eElement.getTextContent());
-                        System.out.println("price is : "
-                                + eElement.getAttribute("price"));
+                        String foodName = eElement.getChildNodes().item(i).getTextContent();
+                        String priceValue = eElement.getChildNodes().item(i).getAttributes().getNamedItem("price").getTextContent();
+                        System.out.println("Foodname name is : " + foodName);
+                        System.out.println("price is : " + priceValue);
+                        addNewElementTextViews(foodName, priceValue, false);
                     }
                 }
             }
